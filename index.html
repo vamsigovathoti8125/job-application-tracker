@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A focused job application tracker for organizing your search." />
+  <title>Job Application Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Job Application Tracker home">
+        <span class="brand-mark" aria-hidden="true">JT</span>
+        <span>Job Application Tracker</span>
+      </a>
+      <div class="topbar-actions">
+        <span class="storage-status"><span class="status-dot"></span>Saved locally</span>
+        <button class="icon-button" id="clearAllButton" type="button" title="Clear all applications" aria-label="Clear all applications">⌫</button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div>
+          <p class="eyebrow">SEARCH CONTROL CENTER <span id="todayLabel"></span></p>
+          <h1>Keep every opportunity<br /><em>within reach.</em></h1>
+          <p class="hero-copy">A calm, clear workspace for tracking applications from first click to final decision.</p>
+        </div>
+        <button class="primary-button" id="openFormButton" type="button"><span aria-hidden="true">+</span> Add application</button>
+      </section>
+
+      <section class="stats-grid" aria-label="Application summary">
+        <article class="stat-card stat-total"><span class="stat-label">Total applications</span><strong id="totalCount">0</strong><span class="stat-note">All tracked roles</span></article>
+        <article class="stat-card"><span class="stat-label">Applied</span><strong id="appliedCount">0</strong><span class="stat-note">In the pipeline</span></article>
+        <article class="stat-card"><span class="stat-label">Interview</span><strong id="interviewCount">0</strong><span class="stat-note">Conversations ahead</span></article>
+        <article class="stat-card"><span class="stat-label">Offers</span><strong id="offerCount">0</strong><span class="stat-note">Great momentum</span></article>
+        <article class="stat-card"><span class="stat-label">Rejected</span><strong id="rejectedCount">0</strong><span class="stat-note">Closed loops</span></article>
+      </section>
+
+      <section class="pipeline-health" aria-label="Pipeline health">
+        <div class="health-copy"><p class="eyebrow">PIPELINE HEALTH</p><h2><span id="activeCount">0</span> active opportunities</h2><p id="healthMessage">Add applications to see your search momentum.</p></div>
+        <div class="health-meter"><div class="meter-track"><span id="healthProgress"></span></div><div class="meter-legend"><span><i class="legend-dot active-dot"></i>Active pipeline</span><span id="progressLabel">0% moving forward</span></div></div>
+      </section>
+
+      <section class="workspace-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR PIPELINE</p>
+            <h2>Applications <span id="visibleCount">0</span></h2>
+          </div>
+          <div class="view-note">Updates save automatically</div>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-field" for="searchInput">
+            <span aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" placeholder="Search company, role, or location" autocomplete="off" />
+          </label>
+          <label class="select-field" for="statusFilter">
+            <span class="sr-only">Filter by status</span>
+            <select id="statusFilter">
+              <option value="All">All statuses</option>
+              <option value="Applied">Applied</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Withdrawn">Withdrawn</option>
+            </select>
+          </label>
+          <button class="clear-filter-button" id="clearFiltersButton" type="button" hidden>Reset</button>
+          <button class="secondary-button" id="exportButton" type="button" title="Download applications as CSV">Export CSV</button>
+        </div>
+
+        <div class="applications-list" id="applicationsList" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-intro">
+        <p class="eyebrow">CREATED BY</p>
+        <h2>Govathoti Vamsi</h2>
+        <p>Built for a more intentional job search.</p>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:vamsigovathoti8125@gmail.com"><span class="contact-label">Email</span><span>vamsigovathoti8125@gmail.com</span></a>
+        <a href="tel:+918125723070"><span class="contact-label">Phone</span><span>8125723070</span></a>
+        <a href="https://www.linkedin.com/in/vamsigovathoti8125/" target="_blank" rel="noreferrer"><span class="contact-label">LinkedIn</span><span>/in/vamsigovathoti8125</span></a>
+        <a href="https://github.com/vamsigovathoti8125" target="_blank" rel="noreferrer"><span class="contact-label">GitHub</span><span>@vamsigovathoti8125</span></a>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="application-dialog" id="applicationDialog">
+    <form id="applicationForm" method="dialog" novalidate>
+      <div class="dialog-header">
+        <div><p class="eyebrow" id="formEyebrow">NEW ENTRY</p><h2 id="formTitle">Add application</h2></div>
+        <button class="close-button" id="closeDialogButton" type="button" aria-label="Close form">×</button>
+      </div>
+      <div class="form-grid">
+        <label class="form-field full-width">Company name <input id="companyInput" name="company" type="text" placeholder="e.g. Microsoft" required /></label>
+        <label class="form-field">Job role <input id="roleInput" name="role" type="text" placeholder="e.g. Product Designer" required /></label>
+        <label class="form-field">Location <input id="locationInput" name="location" type="text" placeholder="e.g. Hyderabad or Remote" /></label>
+        <label class="form-field">Application date <input id="dateInput" name="date" type="date" required /></label>
+        <label class="form-field">Status <select id="statusInput" name="status" required><option value="Applied">Applied</option><option value="Interview">Interview</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option><option value="Withdrawn">Withdrawn</option></select></label>
+        <label class="form-field full-width">Job URL <input id="urlInput" name="url" type="url" placeholder="https://company.com/careers/role" /></label>
+        <label class="form-field full-width">Notes <textarea id="notesInput" name="notes" rows="3" placeholder="Add context, contacts, or next steps..."></textarea></label>
+      </div>
+      <p class="form-error" id="formError" role="alert"></p>
+      <div class="dialog-actions"><button class="secondary-button" id="cancelButton" type="button">Cancel</button><button class="primary-button" type="submit" id="saveButton">Save application</button></div>
+    </form>
+  </dialog>
+  <script src="script.js"></script>
+</body>
+</html>
