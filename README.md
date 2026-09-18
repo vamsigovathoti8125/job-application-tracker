@@ -13,6 +13,7 @@ A responsive frontend application for organizing a job search. It supports the c
 - CSV export for a portable backup
 - Responsive layout for desktop, tablet, and mobile
 - Client-side form validation, including URL validation
+- Simple username workspaces with separate browser storage per user
 
 ## Run locally
 
@@ -30,7 +31,9 @@ job-application-tracker/
 
 ## How it works
 
-The browser loads the saved application array from `localStorage`. Every form submission validates the input, updates the array, saves it back to storage, and re-renders the list. Search and status filtering operate on the current array, while dashboard counts are recalculated from the full collection.
+The browser loads the current user's saved application array from `localStorage`. Each username gets a separate storage key, such as `jobTrackerApplications_vamsi`. Every form submission validates the input, updates that user's array, saves it back to storage, and re-renders the list. Search and status filtering operate on the current array, while dashboard counts are recalculated from the full collection.
+
+This username flow is intentionally simple for a frontend-only demo. It separates workspaces in the same browser, but it is not secure authentication. A production version should use a backend or an authentication provider such as Supabase.
 
 Each application is represented as an object:
 

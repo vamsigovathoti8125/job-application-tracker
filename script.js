@@ -1,7 +1,9 @@
-const STORAGE_KEY = 'jobTrackerApplications';
+const STORAGE_PREFIX = 'jobTrackerApplications_';
+const SESSION_KEY = 'jobTrackerCurrentUser';
 const statuses = ['Applied', 'Interview', 'Offer', 'Rejected', 'Withdrawn'];
 
-let applications = loadApplications();
+let currentUser = localStorage.getItem(SESSION_KEY);
+let applications = currentUser ? loadApplications() : [];
 let editingId = null;
 
 const elements = {
@@ -21,6 +23,31 @@ const elements = {
   url: document.querySelector('#urlInput'),
   notes: document.querySelector('#notesInput')
 };
+
+const loginScreen = document.querySelector('#loginScreen');
+const loginForm = document.querySelector('#loginForm');
+const usernameInput = document.querySelector('#usernameInput');
+const userBadge = document.querySelector('#userBadge');
+
+loginForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const username = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+  if (!username) return;
+  currentUser = username;
+  localStorage.setItem(SESSION_KEY, currentUser);
+  applications = loadApplications();
+  showTracker();
+  renderApplications();
+});
+document.querySelector('#logoutButton').addEventListener('click', () => {
+  currentUser = null;
+  applications = [];
+  localStorage.removeItem(SESSION_KEY);
+  loginScreen.hidden = false;
+  document.querySelector('.app-shell').hidden = true;
+  usernameInput.value = '';
+  usernameInput.focus();
+});
 
 document.querySelector('#todayLabel').textContent = formatShortDate(new Date().toISOString().slice(0, 10));
 document.querySelector('#openFormButton').addEventListener('click', () => openForm());
@@ -51,7 +78,7 @@ elements.list.addEventListener('click', (event) => {
 
 function loadApplications() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const saved = JSON.parse(localStorage.getItem(getStorageKey()));
     return Array.isArray(saved) ? saved : [];
   } catch (error) {
     console.warn('Could not load saved applications.', error);
@@ -60,7 +87,17 @@ function loadApplications() {
 }
 
 function saveApplications() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
+  localStorage.setItem(getStorageKey(), JSON.stringify(applications));
+}
+
+function getStorageKey() {
+  return `${STORAGE_PREFIX}${currentUser}`;
+}
+
+function showTracker() {
+  loginScreen.hidden = true;
+  document.querySelector('.app-shell').hidden = false;
+  userBadge.textContent = `@${currentUser}`;
 }
 
 function updateDashboard() {
@@ -222,4 +259,10 @@ function formatShortDate(dateString) {
 function escapeHTML(value) { return String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
 function escapeAttribute(value) { return escapeHTML(value); }
 
-renderApplications();
+if (currentUser) {
+  showTracker();
+  renderApplications();
+} else {
+  document.querySelector('.app-shell').hidden = true;
+  usernameInput.focus();
+}
